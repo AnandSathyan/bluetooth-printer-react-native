@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -8,7 +7,10 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
+  ScrollView,
+  useWindowDimensions,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const LoginRegisterScreen = () => {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -17,87 +19,97 @@ const LoginRegisterScreen = () => {
   const [registrationNumber, setRegistrationNumber] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
-   const handleSubmit = () => {
+  const { width } = useWindowDimensions();
+
+  const handleSubmit = () => {
     if (isRegistering) {
-      // Registration logic
       if (!name || !email || !password) {
         Alert.alert('Please fill in all fields.');
         return;
       }
       Alert.alert('Registration Successful', `Welcome, ${name}!`);
     } else {
-      // Login logic
       if (!email || !password) {
         Alert.alert('Please enter email and password.');
         return;
       }
       navigation.navigate('HomePage');
-
-      Alert.alert('Login Successful',' Welcome back!');
+      Alert.alert('Login Successful', 'Welcome back!');
     }
 
-    // Reset fields
     setName('');
     setEmail('');
     setPassword('');
+    setRegistrationNumber('');
   };
-  return (
-    <View style={styles.container}>
-      <Text style={styles.header}>{isRegistering ? 'Register' : 'Login'}</Text>
 
-      {isRegistering && (
+  return (
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={[styles.container, { maxWidth: width > 600 ? 500 : '100%' }]}>
+        <Text style={styles.header}>{isRegistering ? 'Register' : 'Login'}</Text>
+
+        {isRegistering && (
+          <TextInput
+            style={styles.input}
+            placeholder="Name"
+            value={name}
+            onChangeText={setName}
+          />
+        )}
         <TextInput
           style={styles.input}
-          placeholder="Name"
-          value={name}
-          onChangeText={setName}
+          placeholder="Registration Number"
+          value={registrationNumber}
+          onChangeText={setRegistrationNumber}
         />
-      )}
-      <TextInput
-        style={styles.input}
-        placeholder="Registration Number"
-        value={registrationNumber}
-        onChangeText={setRegistrationNumber}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        keyboardType="email-address"
-        autoCapitalize="none"
-        value={email}
-        onChangeText={setEmail}
-      />
-         <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-      <Button title={isRegistering ? 'Register' : 'Login'} onPress={handleSubmit} />
-   
-      <TouchableOpacity
-        style={styles.switchMode}
-        onPress={() => setIsRegistering(!isRegistering)}
-      >
-        <Text style={styles.switchText}>
-          {isRegistering
-            ? 'Already have an account? Login'
-            : "Forgot Passsword?"}
-        </Text>
-      </TouchableOpacity>
-    </View>
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          value={email}
+          onChangeText={setEmail}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
+        <View style={styles.buttonContainer}>
+          <Button title={isRegistering ? 'Register' : 'Login'} onPress={handleSubmit} />
+        </View>
+
+        <TouchableOpacity
+          style={styles.switchMode}
+          onPress={() => setIsRegistering(!isRegistering)}
+        >
+          <Text style={styles.switchText}>
+            {isRegistering
+              ? 'Already have an account? Login'
+              : 'Forgot Password?'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 };
 
 export default LoginRegisterScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
+  scrollContainer: {
+    flexGrow: 1,
     justifyContent: 'center',
+    paddingHorizontal: 16,
     backgroundColor: '#f2f2f2',
+  },
+  container: {
+    alignSelf: 'center',
+    padding: 24,
+    backgroundColor: '#f2f2f2',
+    width: '100%',
   },
   header: {
     fontSize: 28,
@@ -112,6 +124,10 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderWidth: 1,
     borderColor: '#ccc',
+  },
+  buttonContainer: {
+    marginTop: 8,
+    marginBottom: 12,
   },
   switchMode: {
     marginTop: 16,

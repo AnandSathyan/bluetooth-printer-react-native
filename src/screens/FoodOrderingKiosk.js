@@ -11,8 +11,10 @@ import {
   Modal,
   FlatList,
   Dimensions,
+  Platform ,
   SafeAreaView,
   useWindowDimensions,
+  PixelRatio 
 } from "react-native"
 import React from "react";
 
@@ -572,7 +574,23 @@ console.log("productData",productData);
     </>
   )
 }
-const { width } = Dimensions.get("window");
+const { width,height } = Dimensions.get("window");
+// const isTablet =  width >= 768 && width < 1024;
+// console.log("isTablet",isTablet,Platform.OS);
+const scale = PixelRatio.get();
+
+const isTablet = () => {
+  const adjustedWidth = width / scale;
+  const adjustedHeight = height / scale;
+  return (
+    Platform.OS !== "web" &&
+    Math.min(adjustedWidth, adjustedHeight) >= 600 &&
+    Math.max(width, height) < 1400
+  );
+};
+const tablet = isTablet()
+console.log(tablet,"isTablet");
+
 
 const styles = StyleSheet.create({
   // ========== Layout ==========
@@ -585,8 +603,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
   },
+  containerTablet: {
+    flex: 1,
+    flexDirection: "column",
+    backgroundColor: "white",
+  },
   sidebar: {
-    width: 120,
+    width: isTablet ? 160 : 120,
     paddingVertical: 10,
     paddingHorizontal: 5,
     backgroundColor: "white",
@@ -615,8 +638,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#f0f0f0",
   },
+  headerTablet: {
+    paddingHorizontal: 24,
+    paddingTop: 20,
+    paddingBottom: 12,
+  },
   headerTitle: {
-    fontSize: 24,
+    fontSize: isTablet ? 28 : 24,
     fontWeight: "bold",
     color: "#333",
   },
@@ -638,7 +666,7 @@ const styles = StyleSheet.create({
 
   // ========== Category ==========
   categoriesContainerMobile: {
-    height: 120,
+    height: isTablet ? 140 : 120,
     borderBottomWidth: 1,
     borderBottomColor: "#f0f0f0",
   },
@@ -647,8 +675,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   categoryButton: {
-    width: 120,
-    height: 180,
+    width: isTablet?140:120,
+    height: isTablet?120:180,
     marginBottom: 10,
     borderRadius: 16,
     backgroundColor: "white",
@@ -666,13 +694,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#f0fdf4",
   },
   categoryButtonMobile: {
-    width: 80,
-    height: 90,
+    width: isTablet ? 140 : 80,
+    height: isTablet ? 100 : 90,
     marginHorizontal: 4,
   },
   categoryImageContainer: {
-    width: 64,
-    height: 40,
+    width: isTablet?100:64,
+    height: isTablet?50:40,
     marginBottom: 8,
     justifyContent: "center",
     alignItems: "center",
@@ -693,21 +721,20 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   categoryTextMobile: {
-    fontSize: 10,
+    fontSize: isTablet ? 12 : 10,
   },
 
   // ========== Products ==========
   productsGrid: {
-    padding: 16,
+    padding: isTablet ? 24 : 16,
     paddingBottom: 100,
-    objectFit:"fill",
   },
   productsGridMobile: {
-    padding: 8,
+    padding: isTablet ? 16 : 8,
     paddingBottom: 100,
   },
   productCard: {
-    width: (width - 160) / 2,
+    width: isTablet ? (width - 250) / 3 : (width - 160) / 2,
     marginBottom: 16,
     marginHorizontal: 8,
     padding: 12,
@@ -724,7 +751,7 @@ const styles = StyleSheet.create({
   productCardMobile: {
     flex: 1,
     margin: 4,
-    maxWidth: "48%",
+    maxWidth: isTablet ? "58%" : "48%",
   },
   activeProductCard: {
     borderColor: "#22333b",
@@ -732,14 +759,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#faf5ff",
   },
   productImage: {
-    width: 140,      
-    height: 80,    
-    borderRadius: 8, 
-    // backgroundColor:"blue",
-    alignSelf: 'center',
+    width: isTablet ? 290 : 140,
+    height: isTablet ? 180 : 80,
+    borderRadius: 8,
+    alignSelf: "center",
   },
   productTitle: {
-    fontSize: 16,
+    fontSize: isTablet ? 18 : 16,
     fontWeight: "600",
     textAlign: "center",
     marginTop: 8,
